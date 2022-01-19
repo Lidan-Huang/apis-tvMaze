@@ -12,10 +12,10 @@ const $searchForm = $("#searchForm");
  *    (if no image URL given by API, put in a default image URL)
  */
 
-async function getShowsByTerm( /* term */) {
+async function getShowsByTerm( term) {
   // ADD: Remove placeholder & make request to TVMaze search shows API.
-  let searchFormTerm = $('#searchForm-term').val();
-  let responseOfShowsList = await axios.get("http://api.tvmaze.com/search/shows", {params: {q: searchFormTerm}});
+  // let searchFormTerm = $('#searchForm-term').val();
+  let responseOfShowsList = await axios.get("http://api.tvmaze.com/search/shows", {params: {q: term}});
   
   console.log("responseOfShowsList:", responseOfShowsList.data);
 
@@ -24,7 +24,14 @@ async function getShowsByTerm( /* term */) {
     let showId = tvShow.show.id;
     let showName = tvShow.show.name;
     let showSummary = tvShow.show.summary;
-    let showImageURL = tvShow.show.image.original; 
+    let image = tvShow.show.image;
+    let showImageURL;
+    if(!image) {
+      showImageURL = 'https://tinyurl.com/tv-missing';
+    } else {
+      showImageURL = image.original;
+    }
+  
     showsList.push({
       id: showId,
       name: showName,
@@ -36,7 +43,7 @@ async function getShowsByTerm( /* term */) {
 }
 
 
-/** Given list of shows, create markup for each and to DOM */
+/** Given list of shows, create markup of image, show name and show summary for each and to DOM */
 
 function populateShows(shows) {
   $showsList.empty();
@@ -46,8 +53,8 @@ function populateShows(shows) {
         `<div data-show-id="${show.id}" class="Show col-md-12 col-lg-6 mb-4">
          <div class="media">
            <img 
-              src="http://static.tvmaze.com/uploads/images/medium_portrait/160/401704.jpg" 
-              alt="Bletchly Circle San Francisco" 
+              src= '${show.image}'
+              alt="${show.name}" 
               class="w-25 me-3">
            <div class="media-body">
              <h5 class="text-primary">${show.name}</h5>
