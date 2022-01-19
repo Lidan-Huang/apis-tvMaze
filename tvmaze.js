@@ -14,6 +14,10 @@ const $searchForm = $("#searchForm");
 
 async function getShowsByTerm( /* term */) {
   // ADD: Remove placeholder & make request to TVMaze search shows API.
+  let searchFormTerm = $('#searchForm-term').val();
+  let responseOfShowsList = await axios.get("http://api.tvmaze.com/search/shows", {params: {q: searchFormTerm}});
+  
+  console.log("responseOfShowsList:", responseOfShowsList);
 
   return [
     {
@@ -86,7 +90,9 @@ $searchForm.on("submit", async function (evt) {
  *      { id, name, season, number }
  */
 
-// async function getEpisodesOfShow(id) { }
+// async function getEpisodesOfShow(id) { 
+  // let responseOfEpisodes = await axios.get('http://api.tvmaze.com/shows/[showid]/episodes', {params: {q: showid}});
+// }
 
 /** Write a clear docstring for this function... */
 
