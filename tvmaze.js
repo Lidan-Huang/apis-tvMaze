@@ -3,7 +3,7 @@
 const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
 const $searchForm = $("#searchForm");
-
+const $episodesList = $('#episodesList');
 
 /** Given a search term, search for tv shows that match that query.
  *
@@ -12,9 +12,7 @@ const $searchForm = $("#searchForm");
  *    (if no image URL given by API, put in a default image URL)
  */
 
-async function getShowsByTerm( term) {
-  // ADD: Remove placeholder & make request to TVMaze search shows API.
-  // let searchFormTerm = $('#searchForm-term').val();
+async function getShowsByTerm(term) {
   let responseOfShowsList = await axios.get("http://api.tvmaze.com/search/shows", {params: {q: term}});
   
   console.log("responseOfShowsList:", responseOfShowsList.data);
@@ -25,6 +23,7 @@ async function getShowsByTerm( term) {
     let showName = tvShow.show.name;
     let showSummary = tvShow.show.summary;
     let image = tvShow.show.image;
+    //ternary function for the if statement below:
     let showImageURL;
     if(!image) {
       showImageURL = 'https://tinyurl.com/tv-missing';
@@ -83,9 +82,9 @@ async function searchForShowAndDisplay() {
   populateShows(shows);
 }
 
-$searchForm.on("submit", async function (evt) {
+$searchForm.on("submit", function (evt) {
   evt.preventDefault();
-  await searchForShowAndDisplay();
+  searchForShowAndDisplay();
 });
 
 
@@ -93,10 +92,29 @@ $searchForm.on("submit", async function (evt) {
  *      { id, name, season, number }
  */
 
-// async function getEpisodesOfShow(id) { 
-  // let responseOfEpisodes = await axios.get('http://api.tvmaze.com/shows/[showid]/episodes', {params: {q: showid}});
-// }
+async function getEpisodesOfShow(id) { 
+  let responseOfEpisodes = await axios.get(`http://api.tvmaze.com/shows/${id}/episodes`);
+
+  let episodesArray = responseOfEpisodes.data.map(function(ep){
+    return {
+      id: ep.id,
+      name: ep.name,
+      season: ep.season,
+      number: ep.number
+    }
+  })
+  populateEpisodes(episodesArray);
+}
 
 /** Write a clear docstring for this function... */
 
-// function populateEpisodes(episodes) { }
+function populateEpisodes(episodes) { 
+  for(let episodeInfo of episodes){
+    const episode = $('<li>')
+      .text(`${episodeInfo.name} (season ${episodeInfo.season}, number ${episodeInfo.number})`);
+    $episodesList.append(episode);
+  }
+  // $episodesArea.show();
+  $episodesArea.attr('hidden', false);
+}
+
