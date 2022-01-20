@@ -82,6 +82,7 @@ async function searchForShowAndDisplay() {
 
   $episodesArea.hide();
   populateShows(shows);
+  // $episodesArea.show();
 }
 
 $searchForm.on("submit", function (evt) {
@@ -110,10 +111,12 @@ async function getEpisodesOfShow(id) {
 function populateEpisodes(episodes) { 
   for(let episodeInfo of episodes){
     const episode = $('<li>')
-      .text(`${episodeInfo.name} (season ${episodeInfo.season}, number ${episodeInfo.number})`);
+      .text(`${episodeInfo.name} 
+      (season ${episodeInfo.season}, 
+        number ${episodeInfo.number})`); 
     $episodesList.append(episode);
   }
-  $episodesArea.attr('hidden', false);
+  $episodesArea.show();
 }
 
 $('#showsList').on('click', '.Show-getEpisodes', (evt) => {
