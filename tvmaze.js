@@ -15,7 +15,7 @@ const $episodesList = $('#episodesList');
 async function getShowsByTerm(term) {
   let responseOfShowsList = await axios.get("http://api.tvmaze.com/search/shows", {params: {q: term}});
   
-  console.log("responseOfShowsList:", responseOfShowsList.data);
+  // console.log("responseOfShowsList:", responseOfShowsList.data);
 
   let showsList = [];
   for(let tvShow of responseOfShowsList.data){
@@ -38,6 +38,8 @@ async function getShowsByTerm(term) {
       image: showImageURL
     });
   }
+
+  console.log('showsList:', showsList[0]);
   return showsList;
 }
 
@@ -88,10 +90,6 @@ $searchForm.on("submit", function (evt) {
 });
 
 
-/** Given a show ID, get from API and return (promise) array of episodes:
- *      { id, name, season, number }
- */
-
 async function getEpisodesOfShow(id) { 
   let responseOfEpisodes = await axios.get(`http://api.tvmaze.com/shows/${id}/episodes`);
 
@@ -103,6 +101,7 @@ async function getEpisodesOfShow(id) {
       number: ep.number
     }
   })
+  console.log(episodesArray);
   populateEpisodes(episodesArray);
 }
 
@@ -114,7 +113,11 @@ function populateEpisodes(episodes) {
       .text(`${episodeInfo.name} (season ${episodeInfo.season}, number ${episodeInfo.number})`);
     $episodesList.append(episode);
   }
-  // $episodesArea.show();
   $episodesArea.attr('hidden', false);
 }
 
+$('#showsList').on('click', '.Show-getEpisodes', (evt) => {
+  let showId = $(evt.target).closest($('.Show')).data('show-id');
+  console.log('showid:', $(evt.target).closest($('.Show')).data('show-id'));
+  getEpisodesOfShow(showId);
+});
